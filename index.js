@@ -1,49 +1,81 @@
-const TelegramBot = require('node-telegram-bot-api');
-const token = '7034470940:AAH1qkxg8ts9pv9Fe8Gll20c-msG4GBUUCY';
+import TelegramBot from 'node-telegram-bot-api';
+import * as CONST from './constant.js'
+
+
+const token = '7085010836:AAEG91FvXrKgHLppodTVnrdv7blcO7dcCEg';
 
 // Create a new bot instance
 const bot = new TelegramBot(token, {polling: true});
+const CHANNEL_ID = '-1002069024087';
 
 // Initialize an object to track the bot's usage
 let performanceTracker = {};
 let linkClicks = {};
 let botList = {};
 
-const welcomeText = "Hey there! I'm here to help you access the most useful bots on Telegram! Hit /help to find out more about how to use me to my full potential. \nJoin my news channel (https://t.me/BotAggregator) to get information on all the latest updates."
-
-const helpMessage = `Help Message
-
-How to use this bot?
-Start the bot, choose your category, and instantly get matched with the most useful bots for your needs.
-
-How to add the bot to Group?
-Add @XXX to your group and then give it admin rights. It is ready to use.
-
-Official Channel (https://t.me/BotAggregator) 
-Admin’s DM (XXXX)`;
-
 // Define the main menu
 const mainMenu = {
     reply_markup: {
-        inline_keyboard: [
-            [{ text: 'Sniping', callback_data: 'sniping' }],
-            [{ text: 'Security', callback_data: 'security' }],
-            [{ text: 'Research', callback_data: 'research' }],
-            [{ text: 'Add your bot', callback_data: 'addBot' }]
-        ]
+        inline_keyboard: CONST.MAIN_MENU
     }
 };
 
 // Handle the /start command
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, welcomeText, mainMenu);
+    const userId = msg.from.id;
+
+    try {
+        // Check if the user is a member of the channel
+        const chatMember = await bot.getChatMember(CHANNEL_ID, userId);
+        const isMember = ['member', 'administrator', 'creator'].includes(chatMember.status);
+
+        if (isMember) {
+            // User is a member, allow access
+            // bot.sendMessage(chatId, CONST.MENU_TEXT, mainMenu);
+            // bot.sendPhoto(chatId, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTIpkosOyvRMJNsRi8dO0UBbMTbZgR4T4EAwBSw9e1nA&s', {
+            //     caption: CONST.MENU_TEXT,
+            //     reply_markup: mainMenu.reply_markup
+            // });
+             // User is a member, allow access
+             const photoUrl = './design2.png';
+             const caption = CONST.MENU_TEXT;
+ 
+             bot.sendPhoto(chatId, photoUrl, { caption, reply_markup: mainMenu.reply_markup });
+            // Add your bot's functionalities here
+        } else {
+            // User is not a member, deny access
+            bot.sendMessage(chatId, CONST.WELCOME_TEXT, { parse_mode: 'HTML' });
+        }
+    } catch (error) {
+        console.error('Error checking membership:', error);
+        bot.sendMessage(chatId, 'An error occurred while checking your membership status.');
+    }
 });
+
 
 // Handle the /help command
 bot.onText(/\/help/, (msg) => {
     const chatId = msg.chat.id;
-    bot.sendMessage(chatId, helpMessage);
+    bot.sendMessage(chatId, CONST.HELP_MESSAGE);
+});
+
+// Handle the /add command
+bot.onText(/\/add/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, 'Please send the URL of your bot.');
+});
+
+// Handle the /tutorial command
+bot.onText(/\/tutorial/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, "Rawr! soon");
+});
+
+// Handle the /donate command
+bot.onText(/\/donate/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, CONST.DONATION_TEXT);
 });
 
 // Handle callback queries (when inline buttons are clicked)
@@ -62,119 +94,165 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
     }
 
       switch(action) {
-        case 'sniping':
-            text = 'Several Telegram bots facilitate automated trading on various blockchains, including ETH, SOL, BSC, and Base. Here is a list of the top sniping bots';
-            options = {
-                reply_markup: {
-            inline_keyboard: [
-                        [{ text: 'Maestro', url: 'https://t.me/maestro?start=r-xnoonxx' }, { text: 'Unibot', url: 'https://t.me/unibotsniper_bot?start=0xe504428C310B1C4Cd70128DD422663Affd05097b' }],
-                        [{ text: 'BananaGun', url: 'https://t.me/BananaGunSniper_bot' }, { text: 'Mizar', url: 'https://t.me/MizarTradingBot?start=ref=9a18c36a050' }],
-                        [{ text: 'Moonbot', url: 'https://t.me/MoonBotio_bot?start=tHpZql' }, { text: 'Looter AI', url: 'https://t.me/looter_ai_bot?start=use_5uROc4.' }],
-                        [{ text: 'Magnum Trade', url: 'https://t.me/magnum_trade_bot?start=ivdEHAyd' }, { text: 'Bonk', url: 'https://t.me/bonkbot_bot?start=ref_31uoc' }],
-                        [{ text: 'SolTradingBot', url: 'https://t.me/SolTradingBot?start=C8wO7OSpF' }, { text: 'Trojan on Solana', url: 'https://t.me/solana_trojanbot?start=r-xnoonxx' }],
-                        [{ text: 'Back', callback_data: 'back' }]
-                    ]
-                }
-            };
+/*<!---------------------------------Ethereum Menu -------------------------------->*/
+        case 'ethereum':
+            text = CONST.ETH_MENU_TEXT;
+            options = optionsFormat(CONST.ETH_MENU);
             break;
-            case 'security':
-                text = 'While identifying high-growth crypto projects can be rewarding, thorough due diligence is crucial. Here are key bots to use before aping';
-                options = {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [{ text: 'Scanners', callback_data: 'scanners' }],
-                            [{ text: 'Audit', callback_data: 'audit' }],
-                            [{ text: 'Honeypot', callback_data: 'honeypot' }],
-                            [{ text: 'Back', callback_data: 'back' }]
-                        ]
-                    }
-                };
-                break;
-                case 'scanners':
-                    text = 'Scanners';
-                    options = {
-                        reply_markup: {
-                    inline_keyboard: [
-                                [{ text: 'TTF', url: 'https://t.me/ttfbotbot' }, { text: 'Otto Simulator', url: 'https://t.me/OttoSimBot' }],
-                                [{ text: 'SAFE Analyzer', url: 'https://t.me/SafeAnalyzerbot' }, { text: 'Alpha Garden ', url: 'https://t.me/AlphaGardenersBot' }],
-                                [{ text: 'Soul Scanner', url: 'https://t.me/soul_scanner_bot' }, { text: 'Ton Chain Scanner', url: 'https://t.me/TonChainScannerBot' }],
-                                [{ text: 'Back', callback_data: 'back' }]
-                            ]
-                        }
-                    };
-                    break;
-                    case 'audit':
-                        text = 'Audit';
-                        options = {
-                            reply_markup: {
-                        inline_keyboard: [
-                                    [{ text: 'De.Fi Scanner', url: 'https://t.me/dedotfibot' }, { text: 'PaladinAI', url: 'https://t.me/PaladinAi_Bot' }],
-                                    [{ text: 'OneAI', url: 'https://t.me/OneAISecurity_Bot' }, { text: '0xScans', url: 'https://t.me/ZeroXScanBot' }],
-                                    [{ text: 'Back', callback_data: 'back' }]
-                                ]
-                            }
-                        };
-                        break;
-                case 'honeypot':
-                    text = 'Honeypot';
-                    options = {
-                        reply_markup: {
-                    inline_keyboard: [
-                                [{ text: 'Honeypot Bot', url: 'https://t.me/HoneypotChatBot' }, { text: 'ArkiTech Check', url: 'https://t.me/MEVFreeHoneypotBot' }],
-                                [{ text: 'Quicki Intel', url: 'https://t.me/My_Quicki_Bot' }, { text: 'Tonk Analyser', url: 'https://t.me/TonkAnalyser_bot' }],
-                                [{ text: 'Back', callback_data: 'back' }]
-                            ]
-                        }
-                    };
-                    break;
-                case 'research':
-                text = 'Explore established crypto research bots for in-depth analyses';
-                options = {
-                    reply_markup: {
-                        inline_keyboard: [
-                            [{ text: 'Proficy Price Bot', url: 'https://t.me/ProficyPriceBot' }, { text: 'EtherDrops Tracking Bot', url: 'https://t.me/EtherDROPS7_bot?start=promo_BUXF9S' }],
-                            [{ text: 'Crypto Scanner Bot', url: 'https://t.me/eth_crypto_scanner_bot' }, { text: 'Tax Inspector', url: 'https://t.me/TaxInspector_Bot' }],
-                            [{ text: 'ASecure.me', url: 'https://t.me/ASecureMeBot' }, { text: 'CoinTrendz', url: 'https://t.me/CoinTrendzBot' }],
-                            [{ text: 'Back', callback_data: 'back' }]
-                        ]
-                    }
-                };
-                break;
-                case 'addBot':
-                bot.sendMessage(chatId, 'Please send the URL of your bot.');
-                return;
-                case 'back':
-            text = welcomeText;
+        case 'eth_snipe' :
+            text = CONST.ETH_SNIPE_TEXT
+            options = optionsFormat(CONST.ETH_SNIPE);
+            break;
+        case 'eth_scan' :
+            text = CONST.ETH_SCAN_TEXT
+            options = optionsFormat(CONST.ETH_SCAN)
+            break;
+        case 'eth_audit':
+            text = CONST.ETH_AUDIT_TEXT;
+            options = optionsFormat(CONST.ETH_AUDIT)
+            break;
+        case 'eth_honeypot':
+            text = CONST.ETH_HONEYPOT_TEXT;
+            options = optionsFormat(CONST.ETH_HONEYPOT)
+            break;
+        case 'eth_research':
+            text = CONST.ETH_RESEARCH_TEXT;
+            options = optionsFormat(CONST.ETH_RESEARCH)
+            break;
+/*<!--------------------------------- Solana Menu -------------------------------->*/
+        case 'solana':
+            text = CONST.SOL_MENU_TEXT;
+            options = optionsFormat(CONST.SOL_MENU);
+            break;
+        case 'sol_snipe':
+            text = CONST.SOL_SNIPE_TEXT;
+            options = optionsFormat(CONST.SOL_SNIPE);
+            break;
+        case 'sol_scan':
+            text = CONST.SOL_SCAN_TEXT;
+            options = optionsFormat(CONST.SOL_SCAN);
+            break;
+        case 'sol_research':
+            text = CONST.SOL_RESEARCH_TEXT;
+            options = optionsFormat(CONST.SOL_RESEARCH);
+            break;
+
+/*<!--------------------------------- Bsc Menu -------------------------------->*/
+
+        case 'bsc':
+            text = CONST.BSC_MENU_TEXT;
+            options = optionsFormat(CONST.BSC_MENU);
+            break;
+        case 'bsc_snipe':
+            text = CONST.BSC_SNIPE_TEXT;
+            options = optionsFormat(CONST.BSC_SNIPE);
+            break;
+        case 'bsc_scan':
+            text = CONST.BSC_SCAN_TEXT;
+            options = optionsFormat(CONST.BSC_SCAN);
+            break;
+        case 'bsc_audit':
+            text = CONST.BSC_AUDIT_TEXT;
+            options = optionsFormat(CONST.BSC_AUDIT)
+            break;
+        case 'bsc_honeypot':
+            text = CONST.BSC_HONEYPOT_TEXT;
+            options = optionsFormat(CONST.BSC_HONEYPOT)
+            break;
+        case 'bsc_research':
+            text = CONST.BSC_RESEARCH_TEXT;
+            options = optionsFormat(CONST.BSC_RESEARCH);
+            break;
+
+/*<!--------------------------------- Base Menu -------------------------------->*/
+
+        case 'base':
+            text = CONST.BASE_MENU_TEXT;
+            options = optionsFormat(CONST.BASE_MENU);
+            break;
+        case 'base_snipe' :
+            text = CONST.BASE_SNIPE_TEXT
+            options = optionsFormat(CONST.BASE_SNIPE);
+            break;
+        case 'base_scan' :
+            text = CONST.BASE_SCAN_TEXT
+            options = optionsFormat(CONST.BASE_SCAN)
+            break;
+        case 'base_audit':
+            text = CONST.BASE_AUDIT_TEXT;
+            options = optionsFormat(CONST.BASE_AUDIT)
+            break;
+        case 'base_honeypot':
+            text = CONST.BASE_HONEYPOT_TEXT;
+            options = optionsFormat(CONST.BASE_HONEYPOT)
+            break;
+        case 'base_research':
+            text = CONST.BASE_RESEARCH_TEXT;
+            options = optionsFormat(CONST.BASE_RESEARCH)
+            break;
+
+/*<!--------------------------------- Ton Menu -------------------------------->*/
+
+        case 'ton':
+            text = CONST.TON_MENU_TEXT;
+            options = optionsFormat(CONST.TON_MENU);
+            break;
+        case 'ton_snipe' :
+            text = CONST.TON_SNIPE_TEXT
+            options = optionsFormat(CONST.TON_SNIPE);
+            break;
+        case 'ton_scan' :
+            text = CONST.TON_SCAN_TEXT
+            options = optionsFormat(CONST.TON_SCAN)
+            break;
+        case 'ton_research':
+            text = CONST.TON_RESEARCH_TEXT;
+            options = optionsFormat(CONST.TON_RESEARCH)
+            break;
+
+/*<!--------------------------------- ADD BOT Menu -------------------------------->*/
+        case 'addBot':
+            bot.sendMessage(chatId, 'Please send the URL of your bot.');
+            return;
+        case 'back':
+            text = CONST.MENU_TEXT;
             options = mainMenu;
             break;
-            default:
-                // Track link clicks
-                if (linkClicks[action]) {
-                    linkClicks[action]++;
-                } else {
-                    linkClicks[action] = 1;
-                }
-                return;
-
+        case 'tutorials':
+            bot.sendMessage(chatId, CONST.TUTORIAL_TEXT);
+            break; 
+        case 'donate':
+            bot.sendMessage(chatId, CONST.DONATION_TEXT);
+            break;    
+        default:
+            // Track link clicks
+            if (linkClicks[action]) {
+                linkClicks[action]++;
+            } else {
+                linkClicks[action] = 1;
+            }
+            return;
     }
-
-    bot.editMessageText(text, {chat_id: chatId, message_id: messageId, ...options});
+    // if(action != 'addBot' || action != 'tutorials' || action != 'donate')
+    //    bot.editMessageText(text, {chat_id: chatId, message_id: messageId, ...options});
+    if (action !== 'addBot' && action !== 'tutorials' && action !== 'donate') {
+        bot.editMessageCaption(text, { chat_id: chatId, message_id: messageId, reply_markup: options.reply_markup })
+            .catch((error) => {
+                console.error('Error editing message text:', error);
+            });
+    }
 });
 
-// Track the bot's performance
-// bot.on('message', (msg) => {
-//     const chatId = msg.chat.id;
-//     if (performanceTracker[chatId]) {
-//         performanceTracker[chatId]++;
-//     } else {
-//         performanceTracker[chatId] = 1;
-//     }
-//     console.log(performanceTracker);
-// });
+function optionsFormat (opt){
+    return {
+        reply_markup: {
+            inline_keyboard: opt
+        }
+    }
+}
+
 // Handle the user's response after clicking the "Add Bot" button
 bot.on('message', (msg) => {
-    console.log(msg)
-
     const chatId = msg.chat.id;
     const text = msg.text;
 
@@ -185,11 +263,8 @@ bot.on('message', (msg) => {
             botList[chatId] = [];
         }
         botList[chatId].push(text);
-        bot.sendMessage(chatId, 'We have received your request. Our team will evaluate the bot and, if deemed beneficial, will classify it in the appropriate category');
+        bot.sendMessage(chatId, CONST.ADD_BOT_TEXT);
     }
-    // else{
-    //     bot.sendMessage(chatId, 'Invalid Url.');
-    // }
 
     // Track the bot's performance
     if (performanceTracker[chatId]) {
