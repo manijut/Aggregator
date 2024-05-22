@@ -27,14 +27,14 @@ For inquiries DM: @xNOONxx
 
 export const DONATION_TEXT = `If we have helped you during your sniping/investing journey and you would love to support our team, we truly appreciate all your goodwill.
 
-You may donate to us on ETH, SOL and TON 
+You may donate to us on ETH, SOL and TON:
 
-ETH : 0x6454198aba1ee23c3491c520f26514449b08913c
-SOL : FHPVaCCoUzBaKLoNHVyJyUCHjfDmAuMYGUMWYrvwJkwh
-TON : UQDUhUAm8YSpoCNVL3q1PMvAufgAPZvu8ZSjiDelhd1q-9BE 
+ETH: \`0x6454198aba1ee23c3491c520f26514449b08913c\`
+SOL: \`FHPVaCCoUzBaKLoNHVyJyUCHjfDmAuMYGUMWYrvwJkwh\`
+TON: \`UQDUhUAm8YSpoCNVL3q1PMvAufgAPZvu8ZSjiDelhd1q-9BE\`
 
-❤ ️ Please DM @xNOONxx if you have donated to us without obligations. We will record all donations for safekeeping purposes ❤️
-`
+❤️ Please DM @xNOONxx if you have donated to us without obligations. We will record all donations for safekeeping purposes ❤️
+`;
 
 /*<!--------------------------------- main menu -------------------------------->*/
 
