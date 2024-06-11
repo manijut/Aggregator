@@ -357,7 +357,10 @@ bot.on('message', (msg) => {
         userState.selection = selection;
         bot.sendMessage(chatId, 'Please send the Token Contract Address');
       } else {
-        bot.sendMessage(chatId, 'Invalid selection. Please choose a number between 1 and 9.');
+        bot.sendMessage(
+          chatId,
+          'Invalid selection. Please choose a number between 1 and 9.'
+        );
       }
     }
   }
